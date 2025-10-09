@@ -21,6 +21,8 @@ return new class extends Migration
             $table->timestamp('unsubscribed_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->index(['first_name', 'last_name']);
         });
     }
 

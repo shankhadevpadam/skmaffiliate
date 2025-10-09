@@ -21,6 +21,7 @@ class SubscribersController extends Controller
         $direction = $request->input('direction', 'asc');
 
         $allowedSortFields = ['id', 'first_name', 'last_name', 'email', 'created_at'];
+        
         if (! in_array($sort, $allowedSortFields)) {
             $sort = 'id';
         }
@@ -29,14 +30,16 @@ class SubscribersController extends Controller
             $direction = 'asc';
         }
 
-        $query = Subscriber::query()->where('user_id', $request->user()->id);
+        $query = Subscriber::query()->whereBelongsTo(auth()->user());
 
         if ($search) {
             $query->where(function ($query) use ($search) {
-                $query->where('first_name', 'like', "%{$search}%")
-                    ->orWhere('last_name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%")
-                    ->orWhere('phone', 'like', "%{$search}%");
+                $query->whereAny([
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'phone',
+                ], 'like', "%{$search}%");
             });
         }
 

@@ -89,9 +89,9 @@ const columns: ColumnDef<Subscriber>[] = [
                     <h1 class="text-2xl font-semibold tracking-tight">
                         Subscribers
                     </h1>
-                    <p class="text-sm text-muted-foreground">
+                    <!-- <p class="text-sm text-muted-foreground">
                         Manage your subscribers and their information.
-                    </p>
+                    </p> -->
                 </div>
             </div>
 

@@ -90,12 +90,40 @@ function search() {
     );
 }
 
+function toggleSort(columnKey: string) {
+    const currentSort = props.filters?.sort;
+    const currentDirection = props.filters?.direction;
+
+    let newDirection: 'asc' | 'desc' = 'asc';
+
+    if (currentSort === columnKey) {
+        newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+    }
+
+    router.get(
+        window.location.pathname,
+        {
+            ...props.filters,
+            sort: columnKey,
+            direction: newDirection,
+        },
+        {
+            preserveState: true,
+            preserveScroll: true,
+        },
+    );
+}
+
 watch(
     () => props.filters?.search,
     (newSearch) => {
         searchQuery.value = newSearch || '';
     },
 );
+
+defineExpose({
+    toggleSort,
+});
 </script>
 
 <template>

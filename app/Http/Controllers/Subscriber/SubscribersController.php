@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers\Subscriber;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\SubscriberResource;
+use Inertia\Inertia;
+use Inertia\Response;
 use App\Models\Subscriber;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Subscriber\UpdateSubscriberRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Resources\SubscriberResource;
 
 class SubscribersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $search = $request->input('search', '');
         $perPage = (int) $request->input('perPage', 10);
@@ -21,7 +25,7 @@ class SubscribersController extends Controller
         $direction = $request->input('direction', 'asc');
 
         $allowedSortFields = ['id', 'first_name', 'last_name', 'email', 'created_at'];
-        
+
         if (! in_array($sort, $allowedSortFields)) {
             $sort = 'id';
         }
@@ -65,7 +69,7 @@ class SubscribersController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::modal('subscribers/Create');
     }
 
     /**
@@ -89,22 +93,30 @@ class SubscribersController extends Controller
      */
     public function edit(Subscriber $subscriber)
     {
-        //
+        return Inertia::modal('subscribers/Edit', [
+            'subscriber' => $subscriber,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Subscriber $subscriber)
+    public function update(UpdateSubscriberRequest $request, Subscriber $subscriber): RedirectResponse
     {
-        //
+        $subscriber->update($request->validated());
+
+        return to_route('subscribers.index');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Subscriber $subscriber)
+    public function destroy(Subscriber $subscriber): RedirectResponse
     {
-        //
+        Gate::allowIf($subscriber->user()->is(auth()->user()));
+
+        $subscriber->delete();
+
+        return back();
     }
 }

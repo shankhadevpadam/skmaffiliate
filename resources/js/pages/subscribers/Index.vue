@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
-import { Badge } from '@/components/ui/badge';
+import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import subscribersRoute from '@/routes/subscribers';
 import type { BreadcrumbItem, PaginatedData, Subscriber } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
-import { h } from 'vue';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
+import { h, ref } from 'vue';
+import DropdownAction from './components/DropdownAction.vue';
 
 interface Props {
     subscribers: PaginatedData<Subscriber>;
@@ -20,12 +22,25 @@ interface Props {
 
 const props = defineProps<Props>();
 
+interface DataTableInstance {
+    toggleSort: (key: string) => void;
+}
+
+const dataTableRef = ref<DataTableInstance | null>(null);
+
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Subscribers',
         href: subscribersRoute.index().url,
     },
 ];
+
+const getSortIcon = (columnKey: string) => {
+    if (props.filters.sort === columnKey) {
+        return props.filters.direction === 'asc' ? ArrowUp : ArrowDown;
+    }
+    return ArrowUpDown;
+};
 
 const columns: ColumnDef<Subscriber>[] = [
     {
@@ -50,30 +65,41 @@ const columns: ColumnDef<Subscriber>[] = [
         },
     },
     {
+        accessorKey: 'email',
+        header: () => {
+            return h(
+                Button,
+                {
+                    variant: 'ghost',
+                    onClick: () => dataTableRef.value?.toggleSort('email'),
+                },
+                () => [
+                    'Email',
+                    h(getSortIcon('email'), { class: 'ml-2 h-4 w-4' }),
+                ],
+            );
+        },
+        cell: ({ row }) =>
+            h('div', { class: 'lowercase' }, row.getValue('email')),
+    },
+    {
         accessorKey: 'phone',
         header: 'Phone',
         cell: ({ row }) => h('div', {}, row.getValue('phone')),
     },
     {
-        accessorKey: 'is_subscribed',
-        header: 'Status',
+        id: 'actions',
+        enableHiding: false,
         cell: ({ row }) => {
-            const isSubscribed = row.getValue('is_subscribed');
+            const subscriber = row.original;
+
             return h(
-                Badge,
-                {
-                    variant: isSubscribed ? 'default' : 'secondary',
-                },
-                () => (isSubscribed ? 'Subscribed' : 'Unsubscribed'),
+                'div',
+                { class: 'relative' },
+                h(DropdownAction, {
+                    subscriber,
+                }),
             );
-        },
-    },
-    {
-        accessorKey: 'created_at',
-        header: 'Created At',
-        cell: ({ row }) => {
-            const date = new Date(row.getValue('created_at'));
-            return h('div', {}, date.toLocaleDateString());
         },
     },
 ];
@@ -96,6 +122,7 @@ const columns: ColumnDef<Subscriber>[] = [
             </div>
 
             <DataTable
+                ref="dataTableRef"
                 :columns="columns"
                 :data="props.subscribers"
                 :filters="props.filters"

@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import DataTable from '@/components/DataTable.vue';
+import DataTable from '@/components/datatable/DataTable.vue';
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import subscribersRoute from '@/routes/subscribers';
 import type { BreadcrumbItem, PaginatedData, Subscriber } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
-import { h, ref } from 'vue';
+import { ArrowDown, ArrowUp, ArrowUpDown, Import, Plus } from 'lucide-vue-next';
+import { h, provide, ref } from 'vue';
 import DropdownAction from './components/DropdownAction.vue';
+import Create from './Create.vue';
 
 interface Props {
     subscribers: PaginatedData<Subscriber>;
@@ -103,6 +104,19 @@ const columns: ColumnDef<Subscriber>[] = [
         },
     },
 ];
+
+/* provide('actions', [
+    {
+        label: 'Import Subscribers',
+        href: subscribersRoute.create().url,
+        icon: Import,
+    },
+    {
+        label: 'Add Subscriber',
+        href: subscribersRoute.create().url,
+        icon: Plus,
+    },
+]); */
 </script>
 
 <template>
@@ -127,7 +141,11 @@ const columns: ColumnDef<Subscriber>[] = [
                 :data="props.subscribers"
                 :filters="props.filters"
                 search-placeholder="Search by name, email, or phone..."
-            />
+            >
+                <template #actions>
+                    <Create />
+                </template>
+            </DataTable>
         </div>
     </AppLayout>
 </template>

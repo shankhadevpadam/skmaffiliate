@@ -128,19 +128,25 @@ defineExpose({
 
 <template>
     <div class="w-full space-y-4">
-        <div v-if="searchable" class="flex items-center gap-2">
-            <div class="relative w-96">
-                <Search
-                    class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                />
-                <Input
-                    v-model="searchQuery"
-                    :placeholder="searchPlaceholder"
-                    class="pl-9"
-                    @keydown.enter="search"
-                />
+        <div class="flex justify-between">
+            <div v-if="searchable" class="flex items-center gap-2">
+                <div class="relative w-96">
+                    <Search
+                        class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                    />
+                    <Input
+                        v-model="searchQuery"
+                        :placeholder="searchPlaceholder"
+                        class="pl-9"
+                        @keydown.enter="search"
+                    />
+                </div>
+                <Button @click="search"> Search </Button>
             </div>
-            <Button @click="search"> Search </Button>
+
+            <!-- <DataTableActions /> -->
+
+            <slot name="actions"></slot>
         </div>
 
         <div class="overflow-hidden rounded-lg border">

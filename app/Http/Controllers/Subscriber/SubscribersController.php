@@ -7,6 +7,7 @@ use Inertia\Response;
 use App\Models\Subscriber;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Subscriber\CreateSubscriberRequest;
 use App\Http\Requests\Subscriber\UpdateSubscriberRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\RedirectResponse;
@@ -75,9 +76,14 @@ class SubscribersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CreateSubscriberRequest $request): RedirectResponse
     {
-        //
+        Subscriber::create([
+            ...$request->validated(),
+            'user_id' => auth()->id(),
+        ]);
+
+        return to_route('subscribers.index');
     }
 
     /**
@@ -105,7 +111,7 @@ class SubscribersController extends Controller
     {
         $subscriber->update($request->validated());
 
-        return to_route('subscribers.index');
+        return back();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Subscriber;
+namespace App\Http\Controllers\Affiliate;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subscriber\CreateSubscriberRequest;
@@ -43,7 +43,7 @@ class SubscribersController extends Controller
 
         $subscribers = SubscriberResource::collection($subscribers);
 
-        return Inertia::render('subscribers/Index', [
+        return Inertia::render('affiliate/subscribers/Index', [
             'subscribers' => $subscribers,
             'filters' => $request->only(['filter', 'sort']),
         ]);
@@ -54,7 +54,7 @@ class SubscribersController extends Controller
      */
     public function create()
     {
-        return Inertia::modal('subscribers/Create');
+        return Inertia::modal('affiliate/subscribers/Create');
     }
 
     /**
@@ -83,7 +83,7 @@ class SubscribersController extends Controller
      */
     public function edit(Subscriber $subscriber)
     {
-        return Inertia::modal('subscribers/Edit', [
+        return Inertia::modal('affiliate/subscribers/Edit', [
             'subscriber' => $subscriber,
         ]);
     }

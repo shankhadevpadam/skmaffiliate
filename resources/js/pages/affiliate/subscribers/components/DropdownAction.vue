@@ -13,7 +13,7 @@ import DropdownMenuContent from '@/components/ui/dropdown-menu/DropdownMenuConte
 import DropdownMenuItem from '@/components/ui/dropdown-menu/DropdownMenuItem.vue';
 import DropdownMenuLabel from '@/components/ui/dropdown-menu/DropdownMenuLabel.vue';
 import DropdownMenuTrigger from '@/components/ui/dropdown-menu/DropdownMenuTrigger.vue';
-import subscribersRoute from '@/routes/subscribers';
+import { destroy, edit } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController';
 import { router } from '@inertiajs/vue3';
 import { ModalLink } from '@inertiaui/modal-vue';
 import { Loader2, MoreHorizontal } from 'lucide-vue-next';
@@ -32,7 +32,7 @@ const isDeleting = ref(false);
 function handleDelete() {
     isDeleting.value = true;
 
-    router.delete(subscribersRoute.destroy(props.subscriber.id).url, {
+    router.delete(destroy(props.subscriber.id).url, {
         preserveState: true,
         preserveScroll: true,
         onSuccess: () => {
@@ -59,7 +59,7 @@ function handleDelete() {
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <ModalLink
-                    :href="subscribersRoute.edit(props.subscriber.id).url"
+                    :href="edit(props.subscriber.id).url"
                     max-width="2xl"
                     :close-explicitly="true"
                     padding-classes="p-5"

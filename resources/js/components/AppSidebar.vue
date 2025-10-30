@@ -12,10 +12,11 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { index as subscribersIndex } from '@/routes/subscribers';
+import { index as subscribersIndex } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController';
+import { index as campaignsIndex } from '@/actions/App/Http/Controllers/Affiliate/CampaignsController';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Users } from 'lucide-vue-next';
+import { LayoutGrid, Mail, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -28,6 +29,11 @@ const mainNavItems: NavItem[] = [
         title: 'Subscribers',
         href: subscribersIndex(),
         icon: Users,
+    },
+    {
+        title: 'Campaigns',
+        href: campaignsIndex(),
+        icon: Mail,
     },
 ];
 

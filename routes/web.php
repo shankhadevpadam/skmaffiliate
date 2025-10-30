@@ -12,7 +12,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::resource('subscribers', App\Http\Controllers\Subscriber\SubscribersController::class);
+    Route::resource('subscribers', App\Http\Controllers\Affiliate\SubscribersController::class);
+    Route::resource('campaigns', App\Http\Controllers\Affiliate\CampaignsController::class);
 });
 
 require __DIR__.'/settings.php';

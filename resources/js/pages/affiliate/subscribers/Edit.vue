@@ -3,7 +3,7 @@ import InputError from '@/components/InputError.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
-import { update } from '@/routes/subscribers';
+import { update } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController';
 import { useForm } from '@inertiajs/vue3';
 import { Modal } from '@inertiaui/modal-vue';
 import { Loader2Icon } from 'lucide-vue-next';

@@ -2,7 +2,7 @@
 import DataTable from '@/components/datatable/DataTable.vue';
 import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import subscribersRoute from '@/routes/subscribers';
+import { index } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController';
 import type { BreadcrumbItem, PaginatedData, Subscriber } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
@@ -32,7 +32,7 @@ const dataTableRef = ref<DataTableInstance | null>(null);
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Subscribers',
-        href: subscribersRoute.index().url,
+        href: index().url,
     },
 ];
 

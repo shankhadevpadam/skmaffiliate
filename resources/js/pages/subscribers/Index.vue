@@ -6,18 +6,18 @@ import subscribersRoute from '@/routes/subscribers';
 import type { BreadcrumbItem, PaginatedData, Subscriber } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
-import { ArrowDown, ArrowUp, ArrowUpDown, Import, Plus } from 'lucide-vue-next';
-import { h, provide, ref } from 'vue';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
+import { h, ref } from 'vue';
 import DropdownAction from './components/DropdownAction.vue';
 import Create from './Create.vue';
 
 interface Props {
     subscribers: PaginatedData<Subscriber>;
     filters: {
-        search: string;
-        per_page: number;
-        sort: string;
-        direction: 'asc' | 'desc';
+        filter?: {
+            search?: string;
+        };
+        sort?: string;
     };
 }
 
@@ -37,8 +37,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const getSortIcon = (columnKey: string) => {
-    if (props.filters.sort === columnKey) {
-        return props.filters.direction === 'asc' ? ArrowUp : ArrowDown;
+    const currentSort = props.filters.sort;
+
+    if (currentSort === columnKey) {
+        return ArrowUp;
+    } else if (currentSort === `-${columnKey}`) {
+        return ArrowDown;
     }
     return ArrowUpDown;
 };
@@ -120,6 +124,7 @@ const columns: ColumnDef<Subscriber>[] = [
 </script>
 
 <template>
+
     <Head title="Subscribers" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -129,19 +134,11 @@ const columns: ColumnDef<Subscriber>[] = [
                     <h1 class="text-2xl font-semibold tracking-tight">
                         Subscribers
                     </h1>
-                    <!-- <p class="text-sm text-muted-foreground">
-                        Manage your subscribers and their information.
-                    </p> -->
                 </div>
             </div>
 
-            <DataTable
-                ref="dataTableRef"
-                :columns="columns"
-                :data="props.subscribers"
-                :filters="props.filters"
-                search-placeholder="Search by name, email, or phone..."
-            >
+            <DataTable ref="dataTableRef" :columns="columns" :data="props.subscribers" :filters="props.filters"
+                search-placeholder="Search by name, email, or phone...">
                 <template #actions>
                     <Create />
                 </template>

@@ -22,10 +22,10 @@ interface Props {
     columns: ColumnDef<TData, TValue>[];
     data: PaginatedData<TData>;
     filters?: {
-        search?: string;
-        per_page?: number;
+        filter?: {
+            search?: string;
+        };
         sort?: string;
-        direction?: 'asc' | 'desc';
     };
     searchable?: boolean;
     searchPlaceholder?: string;
@@ -36,7 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
     searchPlaceholder: 'Search...',
 });
 
-const searchQuery = ref(props.filters?.search || '');
+const searchQuery = ref(props.filters?.filter?.search || '');
 
 const table = useVueTable({
     get data() {
@@ -80,7 +80,9 @@ function search() {
         window.location.pathname,
         {
             ...props.filters,
-            search: searchQuery.value,
+            filter: {
+                search: searchQuery.value,
+            },
             page: 1,
         },
         {
@@ -92,20 +94,26 @@ function search() {
 
 function toggleSort(columnKey: string) {
     const currentSort = props.filters?.sort;
-    const currentDirection = props.filters?.direction;
 
-    let newDirection: 'asc' | 'desc' = 'asc';
+    let newSort: string;
 
+    // Check if currently sorting by this column
     if (currentSort === columnKey) {
-        newDirection = currentDirection === 'asc' ? 'desc' : 'asc';
+        // Currently ascending, switch to descending
+        newSort = `-${columnKey}`;
+    } else if (currentSort === `-${columnKey}`) {
+        // Currently descending, remove sort (back to default)
+        newSort = '';
+    } else {
+        // Not currently sorted by this column, sort ascending
+        newSort = columnKey;
     }
 
     router.get(
         window.location.pathname,
         {
             ...props.filters,
-            sort: columnKey,
-            direction: newDirection,
+            sort: newSort || undefined,
         },
         {
             preserveState: true,
@@ -115,7 +123,7 @@ function toggleSort(columnKey: string) {
 }
 
 watch(
-    () => props.filters?.search,
+    () => props.filters?.filter?.search,
     (newSearch) => {
         searchQuery.value = newSearch || '';
     },
@@ -131,15 +139,9 @@ defineExpose({
         <div class="flex justify-between">
             <div v-if="searchable" class="flex items-center gap-2">
                 <div class="relative w-96">
-                    <Search
-                        class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-                    />
-                    <Input
-                        v-model="searchQuery"
-                        :placeholder="searchPlaceholder"
-                        class="pl-9"
-                        @keydown.enter="search"
-                    />
+                    <Search class="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input v-model="searchQuery" :placeholder="searchPlaceholder" class="pl-9"
+                        @keydown.enter="search" />
                 </div>
                 <Button @click="search"> Search </Button>
             </div>
@@ -152,51 +154,28 @@ defineExpose({
         <div class="overflow-hidden rounded-lg border">
             <div class="overflow-x-auto">
                 <table class="w-full caption-bottom text-sm">
-                    <thead
-                        class="border-b bg-muted/50 dark:bg-muted/20 [&_tr]:border-b"
-                    >
-                        <tr
-                            v-for="headerGroup in table.getHeaderGroups()"
-                            :key="headerGroup.id"
-                            class="border-b transition-colors hover:bg-muted/50 dark:hover:bg-muted/30"
-                        >
-                            <th
-                                v-for="header in headerGroup.headers"
-                                :key="header.id"
-                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                            >
-                                <FlexRender
-                                    v-if="!header.isPlaceholder"
-                                    :render="header.column.columnDef.header"
-                                    :props="header.getContext()"
-                                />
+                    <thead class="border-b bg-muted/50 dark:bg-muted/20 [&_tr]:border-b">
+                        <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id"
+                            class="border-b transition-colors hover:bg-muted/50 dark:hover:bg-muted/30">
+                            <th v-for="header in headerGroup.headers" :key="header.id"
+                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                                <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header"
+                                    :props="header.getContext()" />
                             </th>
                         </tr>
                     </thead>
                     <tbody class="[&_tr:last-child]:border-0">
                         <template v-if="table.getRowModel().rows?.length">
-                            <tr
-                                v-for="row in table.getRowModel().rows"
-                                :key="row.id"
-                                class="border-b transition-colors hover:bg-muted/50 dark:hover:bg-muted/20"
-                            >
-                                <td
-                                    v-for="cell in row.getVisibleCells()"
-                                    :key="cell.id"
-                                    class="p-4 align-middle [&:has([role=checkbox])]:pr-0"
-                                >
-                                    <FlexRender
-                                        :render="cell.column.columnDef.cell"
-                                        :props="cell.getContext()"
-                                    />
+                            <tr v-for="row in table.getRowModel().rows" :key="row.id"
+                                class="border-b transition-colors hover:bg-muted/50 dark:hover:bg-muted/20">
+                                <td v-for="cell in row.getVisibleCells()" :key="cell.id"
+                                    class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
+                                    <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
                                 </td>
                             </tr>
                         </template>
                         <tr v-else>
-                            <td
-                                :colspan="columns.length"
-                                class="h-24 text-center"
-                            >
+                            <td :colspan="columns.length" class="h-24 text-center">
                                 No results.
                             </td>
                         </tr>
@@ -205,28 +184,16 @@ defineExpose({
             </div>
         </div>
 
-        <div
-            class="flex flex-col items-center justify-between gap-4 sm:flex-row"
-        >
+        <div class="flex flex-col items-center justify-between gap-4 sm:flex-row">
             <div class="text-sm text-muted-foreground">
                 Showing {{ from }} to {{ to }} of {{ total }} results
             </div>
 
             <div class="flex items-center gap-2">
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="!canGoPrevious"
-                    @click="goToPage(1)"
-                >
+                <Button variant="outline" size="icon" :disabled="!canGoPrevious" @click="goToPage(1)">
                     <ChevronsLeft class="size-4" />
                 </Button>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="!canGoPrevious"
-                    @click="goToPage(currentPage - 1)"
-                >
+                <Button variant="outline" size="icon" :disabled="!canGoPrevious" @click="goToPage(currentPage - 1)">
                     <ChevronLeft class="size-4" />
                 </Button>
 
@@ -234,20 +201,10 @@ defineExpose({
                     Page {{ currentPage }} of {{ totalPages }}
                 </div>
 
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="!canGoNext"
-                    @click="goToPage(currentPage + 1)"
-                >
+                <Button variant="outline" size="icon" :disabled="!canGoNext" @click="goToPage(currentPage + 1)">
                     <ChevronRight class="size-4" />
                 </Button>
-                <Button
-                    variant="outline"
-                    size="icon"
-                    :disabled="!canGoNext"
-                    @click="goToPage(totalPages)"
-                >
+                <Button variant="outline" size="icon" :disabled="!canGoNext" @click="goToPage(totalPages)">
                     <ChevronsRight class="size-4" />
                 </Button>
             </div>

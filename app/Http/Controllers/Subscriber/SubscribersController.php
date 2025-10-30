@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Subscriber;
 
-use Inertia\Inertia;
-use Inertia\Response;
-use App\Models\Subscriber;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subscriber\CreateSubscriberRequest;
 use App\Http\Requests\Subscriber\UpdateSubscriberRequest;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Resources\SubscriberResource;
+use App\Models\Subscriber;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
+use Inertia\Response;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class SubscribersController extends Controller
 {
@@ -20,48 +23,29 @@ class SubscribersController extends Controller
      */
     public function index(Request $request): Response
     {
-        $search = $request->input('search', '');
         $perPage = (int) $request->input('perPage', 10);
-        $sort = $request->input('sort', 'id');
-        $direction = $request->input('direction', 'asc');
 
-        $allowedSortFields = ['id', 'first_name', 'last_name', 'email', 'created_at'];
-
-        if (! in_array($sort, $allowedSortFields)) {
-            $sort = 'id';
-        }
-
-        if (! in_array($direction, ['asc', 'desc'])) {
-            $direction = 'asc';
-        }
-
-        $query = Subscriber::query()->whereBelongsTo(auth()->user());
-
-        if ($search) {
-            $query->where(function ($query) use ($search) {
-                $query->whereAny([
-                    'first_name',
-                    'last_name',
-                    'email',
-                    'phone',
-                ], 'like', "%{$search}%");
-            });
-        }
-
-        $query->orderBy($sort, $direction);
-
-        $subscribers = $query->paginate($perPage)->withQueryString();
+        $subscribers = QueryBuilder::for(Subscriber::class)
+            ->whereBelongsTo(auth()->user())
+            ->allowedFilters([
+                AllowedFilter::scope('search'),
+            ])
+            ->allowedSorts([
+                AllowedSort::field('id'),
+                AllowedSort::field('first_name'),
+                AllowedSort::field('last_name'),
+                AllowedSort::field('email'),
+                AllowedSort::field('created_at'),
+            ])
+            ->defaultSort('id')
+            ->paginate($perPage)
+            ->withQueryString();
 
         $subscribers = SubscriberResource::collection($subscribers);
 
         return Inertia::render('subscribers/Index', [
             'subscribers' => $subscribers,
-            'filters' => [
-                'search' => $search,
-                'per_page' => $perPage,
-                'sort' => $sort,
-                'direction' => $direction,
-            ],
+            'filters' => $request->only(['filter', 'sort']),
         ]);
     }
 

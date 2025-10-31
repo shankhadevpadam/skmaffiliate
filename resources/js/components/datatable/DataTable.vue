@@ -14,6 +14,7 @@ import {
     ChevronRight,
     ChevronsLeft,
     ChevronsRight,
+    CircleX,
     Search,
 } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
@@ -92,6 +93,10 @@ function search() {
     );
 }
 
+function clear() {
+    router.get(window.location.pathname);
+}
+
 function toggleSort(columnKey: string) {
     const currentSort = props.filters?.sort;
 
@@ -143,7 +148,8 @@ defineExpose({
                     <Input v-model="searchQuery" :placeholder="searchPlaceholder" class="pl-9"
                         @keydown.enter="search" />
                 </div>
-                <Button @click="search"> Search </Button>
+                <Button @click="search">Search<Search /></Button>
+                <Button v-show="props.filters?.filter?.search" @click="clear" class="bg-white border text-black hover:bg-white">Clear <CircleX /></Button>
             </div>
 
             <!-- <DataTableActions /> -->

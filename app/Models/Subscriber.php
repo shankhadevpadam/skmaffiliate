@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Subscriber extends Model
 {
@@ -23,6 +24,13 @@ class Subscriber extends Model
         return [
             'unsubscribed_at' => 'datetime',
         ];
+    }
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            fn () => "{$this->first_name} {$this->last_name}"
+        );
     }
 
     /**

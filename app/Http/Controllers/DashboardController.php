@@ -1,23 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Affiliate;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Campaign;
-use Illuminate\Http\Request;
+use App\Models\Subscriber;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
-class CampaignsController extends Controller
+class DashboardController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $campaigns = Campaign::query()->paginate();
+        $totalSubscribers = Subscriber::query()
+            ->whereBelongsTo(auth()->user())
+            ->count();
 
-        return Inertia::render('affiliate/campaigns/Index', [
-            'campaigns' => $campaigns,
+        return Inertia::render('Dashboard', [
+            'total_subscribers' => $totalSubscribers,
         ]);
     }
 

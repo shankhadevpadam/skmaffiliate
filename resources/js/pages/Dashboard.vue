@@ -11,6 +11,13 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: dashboard().url,
     },
 ];
+
+interface Props {
+    total_subscribers: number;
+}
+
+const props = defineProps<Props>();
+
 </script>
 
 <template>
@@ -56,7 +63,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <h4
                                 class="text-title-sm mt-2 font-bold text-gray-800"
                             >
-                                3,782
+                                {{ props.total_subscribers }}
                             </h4>
                         </div>
 

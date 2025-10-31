@@ -30,16 +30,16 @@ const handleSuccess = () => {
 </script>
 
 <template>
-    <div class="flex gap-2">
+    <div class="flex space-x-2">
         <ModalLink href="#import-subscriber" max-width="2xl" :close-explicitly="true" padding-classes="p-5"
             position="top">
             <Button type="button">
-                <Import /> Import Subscriber
+                Import Subscriber <Import />
             </Button>
         </ModalLink>
         <ModalLink href="#add-subscriber" max-width="2xl" :close-explicitly="true" padding-classes="p-5" position="top">
             <Button type="button">
-                <Plus /> Add Subscriber
+                Add Subscriber <Plus />
             </Button>
         </ModalLink>
     </div>
@@ -97,10 +97,11 @@ const handleSuccess = () => {
                     ? 'border-green-500 bg-green-50'
                     : 'border-gray-300 hover:border-blue-500',
             ]">
-                <input type="file" name="elicos_attachment" @change="handleFileChange" accept=".csv,application/csv,.xlsx"
+                <input type="file" name="file" @change="handleFileChange" accept=".csv,application/csv,.xlsx"
                     class="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
                 <div class="text-center">
                     <FileCheck v-if="selectedFileName" :size="32" class="mx-auto text-green-600" />
+                    
                     <FileSpreadsheet v-else :size="32" class="mx-auto text-gray-400" />
 
                     <p v-if="selectedFileName" class="mt-2 text-sm font-medium text-green-700">

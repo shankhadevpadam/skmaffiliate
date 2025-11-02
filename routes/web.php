@@ -12,7 +12,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('subscribers', App\Http\Controllers\Affiliate\SubscribersController::class);
     Route::resource('campaigns', App\Http\Controllers\Affiliate\CampaignsController::class);
+
+    Route::get('/preview/{record}', function (App\Models\Template $record) {
+        return response($record->content)
+            ->header('Content-Type', 'text/html');
+    })->name('html.preview');
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

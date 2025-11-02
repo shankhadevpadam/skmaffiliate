@@ -34,12 +34,12 @@ const handleSuccess = () => {
         <ModalLink href="#import-subscriber" max-width="2xl" :close-explicitly="true" padding-classes="p-5"
             position="top">
             <Button type="button">
-                Import Subscriber <Import />
+                <Import /> Import Subscriber
             </Button>
         </ModalLink>
         <ModalLink href="#add-subscriber" max-width="2xl" :close-explicitly="true" padding-classes="p-5" position="top">
             <Button type="button">
-                Add Subscriber <Plus />
+                <Plus /> Subscriber
             </Button>
         </ModalLink>
     </div>

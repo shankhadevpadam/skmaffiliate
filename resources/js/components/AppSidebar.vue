@@ -13,10 +13,11 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as subscribersIndex } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController';
+import { index as templatesIndex } from '@/actions/App/Http/Controllers/Affiliate/TemplatesController';
 import { index as campaignsIndex } from '@/actions/App/Http/Controllers/Affiliate/CampaignsController';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { LayoutGrid, Mail, Users } from 'lucide-vue-next';
+import { FileText, LayoutGrid, Mail, Users } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -29,6 +30,11 @@ const mainNavItems: NavItem[] = [
         title: 'Subscribers',
         href: subscribersIndex(),
         icon: Users,
+    },
+    {
+        title: 'Templates',
+        href: templatesIndex(),
+        icon: FileText,
     },
     {
         title: 'Campaigns',

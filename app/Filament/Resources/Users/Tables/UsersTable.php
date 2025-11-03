@@ -1,31 +1,36 @@
 <?php
 
-namespace App\Filament\Resources\Subscribers\Tables;
+namespace App\Filament\Resources\Users\Tables;
 
-use Filament\Tables\Table;
-use Filament\Actions\DeleteAction;
+use Dom\Text;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
-use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Table;
 
-class SubscribersTable
+class UsersTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('full_name')->label('Name')->searchable()->sortable(),
-                TextColumn::make('user.name')->searchable()->sortable(),
+                TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('email')->searchable()->sortable(),
-                TextColumn::make('phone')->searchable(),
+                TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
             ->recordActions([
+                EditAction::make(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

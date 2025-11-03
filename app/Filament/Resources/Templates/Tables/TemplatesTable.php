@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources\Templates\Tables;
 
-use Filament\Tables\Table;
 use Filament\Actions\Action;
-use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
 class TemplatesTable
 {
@@ -16,7 +16,13 @@ class TemplatesTable
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('users.name')
+                    ->label('Assigned Users')
+                    ->badge()
+                    ->separator(','),
             ])
             ->filters([
                 //

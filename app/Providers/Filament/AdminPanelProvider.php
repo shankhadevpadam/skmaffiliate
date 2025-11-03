@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Filament\Panel;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use Filament\Support\Colors\Color;
@@ -59,6 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 EnsureUserIsAdmin::class
             ])
             ->plugins([
+                FilamentShieldPlugin::make(),
                 \Pboivin\FilamentPeek\FilamentPeekPlugin::make(),
             ]);
     }

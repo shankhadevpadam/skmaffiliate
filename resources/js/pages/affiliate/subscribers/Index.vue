@@ -129,13 +129,9 @@ const columns: ColumnDef<Subscriber>[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-2xl font-semibold tracking-tight">
-                        Subscribers
-                    </h1>
-                </div>
-            </div>
+            <h1 class="text-2xl font-semibold tracking-tight">
+                Subscribers
+            </h1>
 
             <DataTable ref="dataTableRef" :columns="columns" :data="props.subscribers" :filters="props.filters"
                 search-placeholder="Search by name, email, or phone...">

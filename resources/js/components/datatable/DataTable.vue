@@ -1,6 +1,14 @@
 <script setup lang="ts" generic="TData, TValue">
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import type { PaginatedData } from '@/types';
 import { router } from '@inertiajs/vue3';
 import {
@@ -148,8 +156,13 @@ defineExpose({
                     <Input v-model="searchQuery" :placeholder="searchPlaceholder" class="pl-9"
                         @keydown.enter="search" />
                 </div>
-                <Button @click="search">Search<Search /></Button>
-                <Button v-show="props.filters?.filter?.search" @click="clear" class="bg-white border text-black hover:bg-white">Clear <CircleX /></Button>
+                <Button @click="search">Search
+                    <Search />
+                </Button>
+                <Button v-show="props.filters?.filter?.search" @click="clear"
+                    class="border bg-white text-black hover:bg-white">Clear
+                    <CircleX />
+                </Button>
             </div>
 
             <!-- <DataTableActions /> -->
@@ -159,34 +172,35 @@ defineExpose({
 
         <div class="overflow-hidden rounded-lg border">
             <div class="overflow-x-auto">
-                <table class="w-full caption-bottom text-sm">
-                    <thead class="border-b bg-muted/50 dark:bg-muted/20 [&_tr]:border-b">
-                        <tr v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id"
-                            class="border-b transition-colors hover:bg-muted/50 dark:hover:bg-muted/30">
-                            <th v-for="header in headerGroup.headers" :key="header.id"
-                                class="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0">
+                <Table>
+                    <TableHeader>
+                        <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
+                            <TableHead v-for="header in headerGroup.headers" :key="header.id">
                                 <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header"
                                     :props="header.getContext()" />
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="[&_tr:last-child]:border-0">
+                            </TableHead>
+                        </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
                         <template v-if="table.getRowModel().rows?.length">
-                            <tr v-for="row in table.getRowModel().rows" :key="row.id"
-                                class="border-b transition-colors hover:bg-muted/50 dark:hover:bg-muted/20">
-                                <td v-for="cell in row.getVisibleCells()" :key="cell.id"
-                                    class="p-4 align-middle [&:has([role=checkbox])]:pr-0">
-                                    <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
-                                </td>
-                            </tr>
+                            <template v-for="row in table.getRowModel().rows" :key="row.id">
+                                <TableRow :data-state="row.getIsSelected() && 'selected'
+                                    ">
+                                    <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                                        <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                                    </TableCell>
+                                </TableRow>
+                            </template>
                         </template>
-                        <tr v-else>
-                            <td :colspan="columns.length" class="h-24 text-center">
+
+                        <TableRow v-else>
+                            <TableCell :colspan="columns.length" class="h-24 text-center">
                                 No results.
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
             </div>
         </div>
 

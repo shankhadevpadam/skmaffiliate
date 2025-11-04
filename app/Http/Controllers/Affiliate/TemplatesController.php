@@ -2,21 +2,41 @@
 
 namespace App\Http\Controllers\Affiliate;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+use App\Http\Resources\TemplateResource;
+use App\Models\Template;
 
 class TemplatesController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $templates = auth()->user()->templates()->get();
+        $userTemplates = Template::whereNotIn('id', function ($query) {
+            $query->select('template_id')
+                ->from('campaigns')
+                ->where('user_id', auth()->id());
+        });
+
+
+        $builder = QueryBuilder::for($userTemplates)
+             ->allowedFilters([
+                AllowedFilter::scope('search'),
+            ])
+            ->defaultSort('id')
+            ->paginate()
+            ->withQueryString();
+
+        $templates = TemplateResource::collection($builder);
 
         return Inertia::render('affiliate/templates/Index', [
             'templates' => $templates,
+            'filters' => $request->only(['filter', 'sort']),
         ]);
     }
 
@@ -26,6 +46,31 @@ class TemplatesController extends Controller
     public function create()
     {
         //
+    }
+
+    public function createCampaign(int $id)
+    {
+        $template = Template::find($id);
+
+        return Inertia::modal('affiliate/templates/CreateCampaign', [
+            'template' => $template,
+        ]);
+    }
+
+    public function storeCampaign(Request $request, int $id)
+    {
+        $validated = $request->validate([
+            'subject' => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $campaign = auth()->user()->campaigns()->create([
+            'template_id' => $id,
+            'subject' => $validated['subject'],
+            'content' => $validated['content'],
+        ]);
+
+        return back();
     }
 
     /**

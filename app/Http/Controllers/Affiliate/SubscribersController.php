@@ -25,7 +25,7 @@ class SubscribersController extends Controller
     {
         $perPage = (int) $request->input('perPage', 10);
 
-        $subscribers = QueryBuilder::for(Subscriber::class)
+        $builder = QueryBuilder::for(Subscriber::class)
             ->whereBelongsTo(auth()->user())
             ->allowedFilters([
                 AllowedFilter::scope('search'),
@@ -41,7 +41,7 @@ class SubscribersController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $subscribers = SubscriberResource::collection($subscribers);
+        $subscribers = SubscriberResource::collection($builder);
 
         return Inertia::render('affiliate/subscribers/Index', [
             'subscribers' => $subscribers,

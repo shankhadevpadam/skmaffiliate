@@ -19,6 +19,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('subscribers', App\Http\Controllers\Affiliate\SubscribersController::class);
     Route::resource('campaigns', App\Http\Controllers\Affiliate\CampaignsController::class);
     Route::resource('templates', App\Http\Controllers\Affiliate\TemplatesController::class);
+    Route::get('templates/{template}/create-campaign', [App\Http\Controllers\Affiliate\TemplatesController::class, 'createCampaign'])->name('templates.create-campaign');
+    Route::post('templates/{template}/store-campaign', [App\Http\Controllers\Affiliate\TemplatesController::class, 'storeCampaign'])->name('templates.store-campaign');
 
     Route::get('/preview/{record}', function (App\Models\Template $record) {
         return response($record->content)

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Affiliate;
 
-use App\Http\Controllers\Controller;
-use App\Models\Campaign;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Campaign;
+use App\Models\Template;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class CampaignsController extends Controller
 {
@@ -24,9 +25,9 @@ class CampaignsController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(int $id)
     {
-        //
+        return Inertia::modal('affiliate/campaigns/Create');
     }
 
     /**

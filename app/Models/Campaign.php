@@ -21,6 +21,11 @@ class Campaign extends Model
         });
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function template(): BelongsTo
     {
         return $this->belongsTo(Template::class);

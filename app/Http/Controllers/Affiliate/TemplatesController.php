@@ -24,7 +24,7 @@ class TemplatesController extends Controller
         });
 
 
-        $builder = QueryBuilder::for($userTemplates)
+        $query = QueryBuilder::for($userTemplates)
              ->allowedFilters([
                 AllowedFilter::scope('search'),
             ])
@@ -32,7 +32,7 @@ class TemplatesController extends Controller
             ->paginate()
             ->withQueryString();
 
-        $templates = TemplateResource::collection($builder);
+        $templates = TemplateResource::collection($query);
 
         return Inertia::render('affiliate/templates/Index', [
             'templates' => $templates,

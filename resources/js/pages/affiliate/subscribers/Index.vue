@@ -51,8 +51,7 @@ const columns: ColumnDef<Subscriber>[] = [
     {
         accessorKey: 'id',
         header: 'ID',
-        cell: ({ row }) =>
-            h('div', { class: 'font-medium' }, row.getValue('id')),
+        cell: ({ row }) => h('div', { class: 'font-medium' }, row.getValue('id')),
     },
     {
         accessorKey: 'full_name',
@@ -84,13 +83,12 @@ const columns: ColumnDef<Subscriber>[] = [
                 ],
             );
         },
-        cell: ({ row }) =>
-            h('div', { class: 'lowercase' }, row.getValue('email')),
+        cell: ({ row }) => row.getValue('email'),
     },
     {
         accessorKey: 'phone',
         header: 'Phone',
-        cell: ({ row }) => h('div', {}, row.getValue('phone')),
+        cell: ({ row }) => row.getValue('phone'),
     },
     {
         id: 'actions',

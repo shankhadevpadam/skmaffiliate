@@ -3,7 +3,7 @@ import InputError from '@/components/InputError.vue';
 import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
-import { store } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController'
+import { importSubscriber, store } from '@/actions/App/Http/Controllers/Affiliate/SubscribersController'
 import { Form } from '@inertiajs/vue3';
 import { Modal, ModalLink } from '@inertiaui/modal-vue';
 import { FileCheck, FileSpreadsheet, Import, Loader2Icon, Plus } from 'lucide-vue-next';
@@ -90,33 +90,39 @@ const handleSuccess = () => {
     <Modal ref="modalRef" name="import-subscriber">
         <h1 class="mb-5 border-b pb-2 text-xl font-semibold">Import Subscriber</h1>
 
-        <div class="space-y-2">
-            <div :class="[
-                'relative rounded-lg border-2 border-dashed bg-white p-6 transition-colors',
-                selectedFileName
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-300 hover:border-blue-500',
-            ]">
-                <input type="file" name="file" @change="handleFileChange" accept=".csv,application/csv,.xlsx"
-                    class="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
-                <div class="text-center">
-                    <FileCheck v-if="selectedFileName" :size="32" class="mx-auto text-green-600" />
-                    
-                    <FileSpreadsheet v-else :size="32" class="mx-auto text-gray-400" />
+        <Form :action="importSubscriber()" method="post" enctype="multipart/form-data" #default="{ errors, processing }">
+            <div class="space-y-2">
+                <div :class="[
+                    'relative rounded-lg border-2 border-dashed bg-white p-6 transition-colors',
+                    selectedFileName
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-300 hover:border-blue-500',
+                ]">
+                    <input type="file" name="file" @change="handleFileChange" accept=".csv,application/csv,.xlsx"
+                        class="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+                    <div class="text-center">
+                        <FileCheck v-if="selectedFileName" :size="32" class="mx-auto text-green-600" />
+                        
+                        <FileSpreadsheet v-else :size="32" class="mx-auto text-gray-400" />
 
-                    <p v-if="selectedFileName" class="mt-2 text-sm font-medium text-green-700">
-                        {{ selectedFileName }}
-                    </p>
-                    <p v-else class="mt-2 text-sm text-gray-600">
-                        Click to upload or drag and drop
-                    </p>
-                    <p class="text-xs text-gray-500">
-                        CSV, XLSX up to 10MB
-                    </p>
+                        <p v-if="selectedFileName" class="mt-2 text-sm font-medium text-green-700">
+                            {{ selectedFileName }}
+                        </p>
+                        <p v-else class="mt-2 text-sm text-gray-600">
+                            Click to upload or drag and drop
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            CSV, XLSX up to 10MB
+                        </p>
+                    </div>
                 </div>
-            </div>
 
-            <Button type="button">Import</Button>
-        </div>
+                <InputError v-if="errors.file" :message="errors.file" />
+
+                <Button type="submit" class="mt-5" :disabled="processing">Import
+                    <Loader2Icon v-if="processing" class="h-4 w-4 animate-spin" />
+                </Button>
+            </div>
+        </Form>
     </Modal>
 </template>

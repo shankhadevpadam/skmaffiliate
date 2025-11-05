@@ -17,6 +17,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('subscribers', App\Http\Controllers\Affiliate\SubscribersController::class);
+    Route::post('subscribers/import', [App\Http\Controllers\Affiliate\SubscribersController::class, 'importSubscriber'])->name('subscribers.import');
+
     Route::resource('campaigns', App\Http\Controllers\Affiliate\CampaignsController::class);
     Route::resource('templates', App\Http\Controllers\Affiliate\TemplatesController::class);
     Route::get('templates/{template}/create-campaign', [App\Http\Controllers\Affiliate\TemplatesController::class, 'createCampaign'])->name('templates.create-campaign');

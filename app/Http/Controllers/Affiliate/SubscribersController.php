@@ -25,7 +25,7 @@ class SubscribersController extends Controller
     {
         $perPage = (int) $request->input('perPage', 10);
 
-        $builder = QueryBuilder::for(Subscriber::class)
+        $query = QueryBuilder::for(Subscriber::class)
             ->whereBelongsTo(auth()->user())
             ->allowedFilters([
                 AllowedFilter::scope('search'),
@@ -41,7 +41,7 @@ class SubscribersController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $subscribers = SubscriberResource::collection($builder);
+        $subscribers = SubscriberResource::collection($query);
 
         return Inertia::render('affiliate/subscribers/Index', [
             'subscribers' => $subscribers,
@@ -108,5 +108,12 @@ class SubscribersController extends Controller
         $subscriber->delete();
 
         return back();
+    }
+
+    public function importSubscriber(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,csv',
+        ]);
     }
 }

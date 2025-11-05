@@ -22,3 +22,7 @@ export function urlIsActive(
 export function toUrl(href: NonNullable<InertiaLinkProps['href']>) {
     return typeof href === 'string' ? href : href?.url;
 }
+
+export function ucFirst(str: string) {
+    return str[0].toUpperCase() + str.slice(1);
+}

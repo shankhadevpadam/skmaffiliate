@@ -3,22 +3,32 @@
 namespace App\Http\Controllers\Affiliate;
 
 use Inertia\Inertia;
-use App\Models\Campaign;
-use App\Models\Template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\AllowedFilter;
+use App\Http\Resources\CampaignResource;
 
 class CampaignsController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $campaigns = Campaign::query()->paginate();
+        $query = QueryBuilder::for(auth()->user()->campaigns())
+             ->allowedFilters([
+                AllowedFilter::scope('search'),
+            ])
+            ->defaultSort('id')
+            ->paginate()
+            ->withQueryString();
+
+        $campaigns = CampaignResource::collection($query);
 
         return Inertia::render('affiliate/campaigns/Index', [
             'campaigns' => $campaigns,
+            'filters' => $request->only(['filter', 'sort']),
         ]);
     }
 

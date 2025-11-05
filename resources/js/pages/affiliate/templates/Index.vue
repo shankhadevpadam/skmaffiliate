@@ -58,14 +58,14 @@ const columns: ColumnDef<Template>[] = [
     {
         accessorKey: 'id',
         header: 'ID',
-        cell: ({ row }) =>
-            h('div', { class: 'font-medium' }, row.getValue('id')),
+        cell: ({ row }) => h('div', { class: 'font-medium' }, row.getValue('id')),
     },
     {
         accessorKey: 'name',
         header: 'Name',
         cell: ({ row }) => {
             const template = row.original;
+
             return h('div', { class: 'flex flex-col' }, [
                 h('div', { class: 'font-medium' }, template.name),
             ]);

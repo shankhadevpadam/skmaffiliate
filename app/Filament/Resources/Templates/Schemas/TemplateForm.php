@@ -24,10 +24,8 @@ class TemplateForm
                             ->preload()
                             ->searchable()
                             ->columnSpanFull(),
-                        Forms\Components\RichEditor::make('content')
-                            ->mergeTags([
-                                'username',
-                            ])
+                        Forms\Components\Textarea::make('content')
+                            ->rows(20)
                             ->columnSpanFull(),
                     ])
                     ->columns(2)

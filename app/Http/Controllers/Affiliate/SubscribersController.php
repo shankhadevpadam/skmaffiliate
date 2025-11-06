@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Subscriber\CreateSubscriberRequest;
 use App\Http\Requests\Subscriber\UpdateSubscriberRequest;
 use App\Http\Resources\SubscriberResource;
+use App\Imports\SubscribersImport;
 use App\Models\Subscriber;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -115,5 +117,9 @@ class SubscribersController extends Controller
         $request->validate([
             'file' => 'required|file|mimes:xlsx,csv',
         ]);
+
+        Excel::import(new SubscribersImport(auth()->user()), $request->file('file'));
+
+        return back();
     }
 }

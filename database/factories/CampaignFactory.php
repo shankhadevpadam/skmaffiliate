@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Template;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,11 @@ class CampaignFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'template_id' => Template::factory(),
+            'subject' => fake()->sentence(),
+            'content' => fake()->paragraphs(3, true),
+            'status' => 'draft',
         ];
     }
 }

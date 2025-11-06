@@ -76,4 +76,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasMany(Campaign::class);
     }
+
+    public function subscribers(): HasMany
+    {
+        return $this->hasMany(Subscriber::class);
+    }
 }

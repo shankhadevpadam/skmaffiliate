@@ -27,6 +27,14 @@ const handleSuccess = () => {
 
     toast.success('Subscriber added successfully.');
 };
+
+const handleImportSuccess = () => {
+    if (modalRef.value && typeof modalRef.value.close === 'function') {
+        modalRef.value.close();
+    }
+
+    toast.success('Importing subscribers run in background.');
+};
 </script>
 
 <template>
@@ -90,7 +98,7 @@ const handleSuccess = () => {
     <Modal ref="modalRef" name="import-subscriber">
         <h1 class="mb-5 border-b pb-2 text-xl font-semibold">Import Subscriber</h1>
 
-        <Form :action="importSubscriber()" method="post" enctype="multipart/form-data" #default="{ errors, processing }">
+        <Form :action="importSubscriber()" #default="{ errors, processing }" @success="handleImportSuccess" resetOnSuccess enctype="multipart/form-data">
             <div class="space-y-2">
                 <div :class="[
                     'relative rounded-lg border-2 border-dashed bg-white p-6 transition-colors',

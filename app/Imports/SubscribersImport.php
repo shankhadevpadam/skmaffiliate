@@ -2,33 +2,39 @@
 
 namespace App\Imports;
 
-use App\Models\User;
 use App\Models\Subscriber;
-use Maatwebsite\Excel\Concerns\ToModel;
+use App\Models\User;
+use App\Notifications\ImportHasFailedNotification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\ImportFailed;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use App\Notifications\ImportHasFailedNotification;
 
-class SubscribersImport implements ToModel, WithChunkReading, ShouldQueue, WithEvents
+class SubscribersImport implements ShouldQueue, ToCollection, WithChunkReading, WithEvents
 {
     public function __construct(public User $user) {}
 
-    /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
-    public function model(array $row)
+    public function collection(Collection $rows): void
     {
-        return new Subscriber([
-            'user_id' => $this->user->id,
-            'first_name' => $row[0],
-            'last_name' => $row[1],
-            'email' => $row[2],
-            'phone' => $row[3] ?? null,
-        ]);
+        $data = $rows->map(function ($row) {
+            return [
+                'user_id' => $this->user->id,
+                'first_name' => $row[0],
+                'last_name' => $row[1],
+                'email' => $row[2],
+                'phone' => $row[3] ?? null,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        })->toArray();
+
+        Subscriber::upsert(
+            $data,
+            ['user_id', 'email'],
+            ['first_name', 'last_name', 'phone', 'updated_at']
+        );
     }
 
     public function chunkSize(): int

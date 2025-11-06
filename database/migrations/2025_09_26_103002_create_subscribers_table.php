@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('first_name');
-            $table->string('last_name');
+            $table->string('last_name')->nullable();
             $table->string('email');
             $table->string('phone');
             $table->timestamp('unsubscribed_at')->nullable();
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index(['first_name', 'last_name']);
+            $table->unique(['user_id', 'email']);
         });
     }
 

@@ -30,6 +30,7 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 const page = usePage();
 const user = page.props.auth.user;
+console.log(user);
 </script>
 
 <template>
@@ -75,6 +76,19 @@ const user = page.props.auth.user;
                             placeholder="Email address"
                         />
                         <InputError class="mt-2" :message="errors.email" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="affiliate_tag">Affiliate Tag</Label>
+                        <Input
+                            id="affiliate_tag"
+                            type="affiliate_tag"
+                            class="mt-1 block w-full"
+                            name="affiliate_tag"
+                            :default-value="user.affiliate_tag"
+                            placeholder="Affiliate Tag"
+                        />
+                        <InputError class="mt-2" :message="errors.affiliate_tag" />
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">

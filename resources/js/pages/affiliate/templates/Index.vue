@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import DataTable from '@/components/datatable/DataTable.vue';
-import Button from '@/components/ui/button/Button.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { index } from '@/actions/App/Http/Controllers/Affiliate/TemplatesController';
-import type { BreadcrumbItem, PaginatedData, Subscriber } from '@/types';
+import type { BreadcrumbItem, PaginatedData } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import type { ColumnDef } from '@tanstack/vue-table';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';

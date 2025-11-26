@@ -12,7 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('affiliate_tag')->nullable()->after('is_admin');
+            $table->after('is_admin', function ($table) {
+                $table->string('affiliate_tag')->nullable();
+                $table->integer('coupon_id')->nullable();
+            });
         });
     }
 
@@ -22,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('affiliate_tag');
+            $table->dropColumn('affiliate_tag', 'coupon_id');
         });
     }
 };

@@ -6,8 +6,8 @@ use App\Mail\CampaignMail;
 use App\Models\Campaign;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class SendCampaignJob implements ShouldQueue
@@ -26,10 +26,8 @@ class SendCampaignJob implements ShouldQueue
      */
     public function handle(): void
     {
-        // Get the campaign with its template
         $campaign = $this->campaign->load('template', 'user');
 
-        // Get all subscribers for this user who haven't unsubscribed
         $subscribers = $campaign->user->subscribers()
             ->whereNull('unsubscribed_at')
             ->whereNull('deleted_at')
@@ -37,8 +35,8 @@ class SendCampaignJob implements ShouldQueue
 
         // Replace {{ content }} in template with campaign content
         $emailContent = str_replace(
-            '{{ content }}',
-            $campaign->content,
+            ['{{ content }}', '{{ affiliate_tag }}'],
+            [$campaign->content, $campaign->user->affiliate_tag ?? ''],
             $campaign->template->content
         );
 
@@ -65,21 +63,19 @@ class SendCampaignJob implements ShouldQueue
                         htmlContent: $emailContent
                     )
                 );
-                
+
                 $totalSent++;
             } catch (\Exception $e) {
                 Log::error("Failed to send email to {$subscriber->email} for campaign {$campaign->id}: {$e->getMessage()}");
             }
         }
 
-        // Update campaign status
         $campaign->update(['status' => 'sent']);
 
-        // Log summary
-        Log::info("Campaign {$campaign->id} completed. Total emails sent: {$totalSent}, Invalid emails: " . count($invalidEmails));
+        Log::info("Campaign {$campaign->id} completed. Total emails sent: {$totalSent}, Invalid emails: ".count($invalidEmails));
 
-        if (!empty($invalidEmails)) {
-            Log::info("Invalid email addresses for campaign {$campaign->id}: " . implode(', ', $invalidEmails));
+        if (! empty($invalidEmails)) {
+            Log::info("Invalid email addresses for campaign {$campaign->id}: ".implode(', ', $invalidEmails));
         }
     }
 }

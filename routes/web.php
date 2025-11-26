@@ -1,7 +1,26 @@
 <?php
 
+use App\Services\WooCommerceService;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get('/coupons', function () {
+    $wooCommerce = new WooCommerceService;
+
+    $coupon = $wooCommerce->client->post('coupons', [
+        'code' => 'SUMMER2026',
+        'amount' => '15',
+        'discount_type' => 'percent',
+        'description' => '15% off summer sale',
+        'individual_use' => true,
+        'exclude_sale_items' => true,
+        'minimum_amount' => '50',
+        'usage_limit' => 100,
+        'date_expires' => '2025-12-31',
+    ]);
+
+    dump($coupon->id);
+});
 
 Route::get('/', function () {
     // return Inertia::render('Welcome');

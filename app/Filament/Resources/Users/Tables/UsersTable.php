@@ -28,6 +28,7 @@ class UsersTable
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('email')->searchable()->sortable(),
+                TextColumn::make('affiliate_tag')->label('Affiliate Tag')->searchable()->sortable(),
             ])
             ->filters([
                 TrashedFilter::make(),
